@@ -1,24 +1,27 @@
 # Bot Web Crawler - Padrão TISS (ANS)
 
-**Desenvolvido por:** Michel Lavanere Sampaio
+**Desenvolvido por:** Michel Lavanere Sampaio  
+**Desafio:** Acelera ZG
 
-## Descrição do Projeto
-Este projeto é um Web Crawler/Scraper desenvolvido em Groovy. O objetivo é acessar o site do Governo (Agência Nacional de Saúde Suplementar - ANS), navegar pelas páginas referentes ao Padrão TISS e extrair automaticamente documentações, históricos de versão e planilhas relacionadas.
+## Sobre o Projeto
+Este projeto consiste em um Web Crawler/Scraper desenvolvido em **Groovy** para automatizar a coleta de dados e arquivos de acesso livre no portal da Agência Nacional de Saúde Suplementar (ANS), especificamente na seção do Padrão TISS (Troca de Informação de Saúde Suplementar).
 
-## Funcionalidades (Tasks)
-1. **Download do Padrão TISS:** Acessa a versão mais recente do padrão TISS e faz o download automático do arquivo do "Componente de Comunicação".
-2. **Scraping do Histórico:** Navega pela tabela de histórico de versões e extrai os dados de competência, publicação e início de vigência (a partir de Janeiro/2016), salvando-os em um arquivo `.csv`.
-3. **Download da Tabela de Erros:** Acessa as tabelas relacionadas e baixa a planilha atualizada de erros no envio para a ANS.
-4. **(Opcional) Gestão de E-mails:** Sistema CRUD básico utilizando manipulação de arquivos de texto para gerenciar uma lista de e-mails de interessados, com integração SMTP preparada para disparar os arquivos/relatórios via e-mail.
+A automação acessa as páginas do governo, realiza o parser do HTML utilizando **HTTPBuilder** e **Jsoup**, navega pelas tabelas dinamicamente com suporte a **Regex** e salva os dados estruturados localmente.
+
+## Funcionalidades Implementadas
+
+O robô cumpre rigorosamente as 3 Tasks obrigatórias e os requisitos opcionais:
+
+- **[Task 1] Download do Componente de Comunicação:** Acessa a página base via HTTPBuilder, encontra dinamicamente a versão mais recente do Padrão TISS na página e faz o download automático do arquivo `.zip` correspondente.
+- **[Task 2] Extração de Histórico (CSV):** Acessa o histórico de versões, faz o parser da tabela no HTML e extrai os dados (Competência, Publicação e Início de Vigência), filtrando via Regex apenas os registros a partir de **Janeiro de 2016**, salvando-os no arquivo `historico_tiss.csv`.
+- **[Task 3] Download da Tabela de Erros:** Acessa a página de Tabelas Relacionadas e realiza o download da "Tabela de erros no envio para a ANS" em formato `.xlsx`.
+- **[Requisito Opcional] Gestão de Interessados (CRUD) e Notificação (E-mail):** Implementa um CRUD em arquivo de texto (`emails_interessados.txt`) para gerenciar destinatários. Ao final da extração, dispara um relatório via servidor SMTP (`javax.mail`) notificando que os arquivos foram baixados com sucesso.
 
 ## Tecnologias Utilizadas
-- **Linguagem:** Groovy
-- **Bibliotecas:** Jsoup (para parser do HTML) e `javax.mail` (para envio de emails).
-- **Recursos Nativos:** IO/NIO para manipulação de arquivos locais e Regex (`java.util.regex`) para extração inteligente de datas e links nas tabelas.
 
-## Como Executar
-1. Certifique-se de ter o Groovy instalado na sua máquina (recomendável gerenciá-lo pelo SDKMAN!).
-2. Clone este repositório.
-3. No terminal, navegue até a raiz do projeto e execute:
-   ```bash
-   groovy TissCrawler.groovy
+- **Linguagem:** Groovy 3.0.22
+- **Gerenciador de Dependências:** Gradle
+- **Requisições HTTP:** HTTPBuilder (0.7.1)
+- **Parser de HTML/DOM:** Jsoup (1.15.3)
+- **Envio de E-mails:** JavaMail API (1.6.2)
+- **Recursos Nativos:** Expressões Regulares (`java.util.regex`), Manipulação de Arquivos e NIO (`java.nio.file`).
