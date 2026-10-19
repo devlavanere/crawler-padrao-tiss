@@ -1,5 +1,8 @@
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import groovyx.net.http.HTTPBuilder
+import static groovyx.net.http.Method.GET
+import static groovyx.net.http.ContentType.TEXT
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.regex.Matcher
@@ -40,9 +43,34 @@ class TissCrawler {
         }
     }
 
+    static Document acessarPaginaComHttpBuilder(String urlString) {
+        def http = new HTTPBuilder(urlString)
+        Document documentoHtml = null
+
+        // Faz a requisição GET solicitando texto puro para passarmos ao Jsoup
+        http.request(GET, TEXT) { req ->
+            headers.'User-Agent' = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' // Finge ser um navegador
+
+            response.success = { resp, reader ->
+                // Uso de Jsoup APENAS para fazer o parser
+                documentoHtml = Jsoup.parse(reader.text)
+            }
+            response.failure = { resp ->
+                println "Erro ao acessar página: ${resp.statusLine}"
+            }
+        }
+        return documentoHtml
+    }
+
     static void task1ObterComponenteComunicacao() {
         println "\n[Task 1] Buscando a versão mais recente do Padrão TISS..."
-        Document doc = Jsoup.connect(BASE_URL).get()
+
+        Document doc = acessarPaginaComHttpBuilder(BASE_URL)
+
+        if (doc == null) {
+            println "Falha ao carregar a página base com HTTPBuilder."
+            return
+        }
 
         def links = doc.select("a[href]")
         String urlPadraoRecente = null
@@ -79,7 +107,7 @@ class TissCrawler {
             Document docPadrao = Jsoup.connect(urlPadraoRecente).get()
 
             // O Componente de Comunicação é SEMPRE distribuído como .zip
-            // Vamos usar um seletor CSS poderoso do Jsoup que pega links terminados em ".zip"
+            // Jsoup pega links terminados em ".zip"
             def downloadLinkElement = docPadrao.select("a[href\$=.zip]").first()
 
             // Fallback caso não termine em .zip (redirecionamento)

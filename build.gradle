@@ -10,8 +10,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.groovy:groovy:4.0.22'
+    implementation 'org.codehaus.groovy:groovy:3.0.22'
+    implementation 'org.codehaus.groovy:groovy-xml:3.0.22'
     implementation 'org.jsoup:jsoup:1.15.3'
+    implementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
     implementation 'com.sun.mail:javax.mail:1.6.2'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
